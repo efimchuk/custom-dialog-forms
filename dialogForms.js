@@ -25,12 +25,23 @@ let Alert = (message) => {
             document.getElementById('alertdiv').style.display = 'inline-block';
             document.getElementById('alertdiv').getElementsByTagName('p')[0].innerText = message;
 
-            window.addEventListener('keypress', function (event) {
+            function globalKeyDown(event) {
                 if(event.keyCode === 13){
                     closeAllDialogs(event);
-                    resolve();
+                    resolve(document.getElementById('promptdiv').getElementsByTagName('input')[0].value);
+                    window.removeEventListener('keydown', globalKeyDown);
+                    return;
                 }
-            }, {once: true})
+
+                if(event.keyCode === 27){
+                    closeAllDialogs(event);
+                    resolve(null);
+                    window.removeEventListener('keydown', globalKeyDown);
+                    return;
+                }
+            }
+            
+            window.addEventListener('keydown', globalKeyDown);
         } catch(error){
             reject(error);
         }
@@ -46,19 +57,23 @@ let Confirm = (message) => {
             document.getElementById('confirmdiv').style.display = 'inline-block';
             document.getElementById('confirmdiv').getElementsByTagName('p')[0].innerText = message;
 
-            window.addEventListener('keydown', function (event) {
+            function globalKeyDown(event) {
                 if(event.keyCode === 13){
                     closeAllDialogs(event);
-                    resolve(true);
+                    resolve(document.getElementById('promptdiv').getElementsByTagName('input')[0].value);
+                    window.removeEventListener('keydown', globalKeyDown);
                     return;
                 }
 
                 if(event.keyCode === 27){
                     closeAllDialogs(event);
-                    resolve(false);
+                    resolve(null);
+                    window.removeEventListener('keydown', globalKeyDown);
                     return;
                 }
-            }, {once: true})
+            }
+            
+            window.addEventListener('keydown', globalKeyDown);
         } catch(error){
             reject(error);
         }
@@ -91,7 +106,7 @@ let Prompt = (message) => {
                 }
             }
             
-            window.addEventListener('keydown', globalKeyDown)
+            window.addEventListener('keydown', globalKeyDown);
         } catch(error){
             reject(error);
         }
